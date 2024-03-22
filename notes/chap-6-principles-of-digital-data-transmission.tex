@@ -1,0 +1,283 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\renewcommand{\baselinestretch}{1}
+\setlength{\textheight}{9in}
+\setlength{\textwidth}{6.5in}
+\setlength{\headheight}{0in}
+\setlength{\headsep}{0in}
+\setlength{\topmargin}{0in}
+\setlength{\oddsidemargin}{0in}
+\setlength{\evensidemargin}{0in}
+\setlength{\parindent}{.3in}
+\graphicspath{{images/}}
+
+
+\title{Communication Systems \\
+    \large Chapter 6 Principles of Digital Data Transmission }
+\author{Hunter Mills}
+\date{\today}
+
+\begin{document}
+    \maketitle
+
+    \medskip
+        
+    \section{Baseband Line Coding}
+    Digital data can be transmitted with multiple different line codes (such as on/off, polar, bipolar). They each have their own
+    advantages but the properties a line code should have is
+    \begin{itemize}
+        \item \textbf{Low Bandwidth}    - Transmission bandwidth should be as low as possible.
+        \item \textbf{Power Efficiency} - For a given bandwidth and specified detection error rate, the power should be as low as possible.
+        \item \textbf{Error Detection and Correction} - Ability to detect and correct errors (CH13).
+        \item \textbf{Favorable Spectral Density} - It is desireable to have 0 PSD at DC.
+        \item \textbf{Adequate Timing Content} - It should be able to extract timing/clock information.
+        \item \textbf{Transparency} - It should be possible to correctly receive any pattern of 0, 1's.
+   \end{itemize}
+        
+    \subsection{PSD of Various Baseband Line Codes}
+    In this section $p(t)$ is a generic pulse with Fourier Transform of $P(f)$. The line code symbol at time $k$ is $a_k$
+    and $T_b = 1/R_b$ (bit rate).
+    \begin{equation}
+        y(t) = \sum a_kp(t-kT_b)
+    \end{equation}
+    A way to describe the PSD of $y(t)$, not depending on $p(t)$ is to select a PAM signal $x(t)$ that uses unit impulses for the 
+    basic then pass it through a filter with impulse response $h(t) = p(t)$. The PSD will be
+    \begin{equation}
+        S_y(f) = |P(f)|^2S_x(f)
+    \end{equation}
+
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.75\textwidth]{psdpulse}
+        \caption{PSD of $p(t)$}
+    \end{figure}
+    A very good derivation on page 372 of the autocorrelation $\mathcal{R}(\tau)$ where 
+    \begin{equation}
+        \mathcal{R}(\tau) = \lim_{T \rightarrow \infty}\frac{1}{T}\int_{-T/2}^{T/2}x(t)x(t-\tau)dt
+    \end{equation}
+    \begin{equation}
+        \mathcal{R}(\tau) = \frac{1}{T_b}\sum_n R_n \delta(\tau-nT_b)
+    \end{equation}
+    where ($|\overline{x}|$ is the time average)
+    \begin{equation}
+        R_n = \lim_{N \rightarrow \infty} \frac{T_b}{T} \sum_k a_ka_{k+n} = |\overline{a_ka_{k+n}}|
+    \end{equation}
+    \begin{equation}
+        R_0 = \lim_{N\rightarrow \infty} \frac{1}{N}\sum_k a_k^2 = |\overline{a_k^2}|
+    \end{equation}
+    The PSD $S_x(f)$ is the fourier transform of $\mathcal{R}(\tau)$,
+    \begin{equation}
+        S_x(f) = \frac{1}{T_b}\sum_n R_ne^{-jn2\pi fT_b}
+    \end{equation}
+    Since $\mathcal{R}(\tau)$ is an even function of $\tau$
+    \begin{equation}
+        S_x(f) = \frac{1}{T_b}[R_o + 2 \sum_{n=1}^{\infty}R_n \cos n2\pi fT_b]
+    \end{equation}
+    and finally
+    \begin{equation}
+        S_y(f) = |P(f)|^2S_x(f) 
+    \end{equation}
+    \begin{equation}
+        S_y(f) = \frac{|P(f)|^2}{T_b}[\sum_n R_n e^{-jn2\pi fT_b}]
+    \end{equation}
+    \begin{equation}
+        S_y(f) =  \frac{|P(f)|^2}{T_b}[R_0 + 2 \sum_{n=1}^{\infty}R_n \cos n2\pi fT_b]
+    \end{equation}
+
+    \subsection{Polar Signaling}
+    In polar signaling, a binary $1$ is sent as $p(t)$ and a binary $0$ is sent as $-p(t)$. In this case
+    $a_k$ is equally likely to be $1$  or $-1$ and $a_k^2 = 1$.
+    \begin{equation}
+        R_0 = \lim_{N\rightarrow \infty} \frac{1}{N}\sum_k a_k^2 =  \lim_{N\rightarrow \infty} \frac{1}{N}(N) = 1
+    \end{equation}
+    Equation 5 shows that $R_n$ is the time average of $a_ka_{k+n}$ and since $a_k$ is equally likely
+    to be $1$ or $-1$,
+    \begin{equation}
+        R_1 = \lim_{N \rightarrow \infty} \frac{1}{N}[\frac{N}{2}(1) + \frac{N}{2}(-1)] = 0
+    \end{equation}
+    and therefore 
+    \begin{equation}
+        R_n = 0 \quad n > 0
+    \end{equation}
+    \begin{equation}
+        S_y(f) = \frac{|P(f)|^2}{T_b}R_0 = \frac{|P(f)|^2}{T_b}R_0
+    \end{equation}
+
+    \subsection{Constructing a DC Null in PSD by Pulse Shaping}
+    Since $S_y(f)$ has a multiplicative factor of $|P(f)|^2$ we can force the PSD to have a DC null 
+    such that $p(t)$ doenst have a DC offset.
+    \begin{equation}
+        P(0) = \int_{-\infty}^{\infty}p(t)dt
+    \end{equation}
+    If the area under $p(t)$ is zero then there is a DC null.
+
+    \section{Digital Carrier Systems}
+    \subsection{Basic Binary Carrier Modulations}
+    \subsubsection{ASK}
+    ASK is known as \textbf{Amplitude Shift Keying}. The on-off baseband signal $m(t)$ is ($a_k = 0,1$)
+    \begin{equation}
+        m(t) = \sum_k a_k p(t-kTb) \quad \textrm{where} \quad p(t) = \Pi (\frac{t-T_b/2}{T_b})
+    \end{equation}
+    The ASK signal is
+    \begin{equation}
+        \varphi_{ASK}(t) = m(t)\cos \omega_ct
+    \end{equation}
+
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=6cm, height=7cm]{ask}
+        \caption{On-off keyed $m(t)$ modulated by ASK}
+    \end{figure}
+
+    \subsubsection{PSK}
+    PSK is known as \textbf{Phase Shift Keying}. If a baseband signal $m(t)$ is polar, transmitting a $1$ 
+    would produce a pulse $p(t)\cos \omega_ct$ and transmitting a $0$ would produce $-p(t)\cos \omega_ct$.
+    This can be rewritten as 
+    \begin{equation}
+        -p(t)\cos \omega_ct = p(t)\cos (\omega_ct + \pi)
+    \end{equation}
+    which is a signal that is $\pi$ radians (180deg) apart in phase.
+    So when the line code is polar ($a_k = -1,1$), then
+    \begin{equation}
+        \varphi_{PSK}(t) - m(t)\cos \omega_c t \quad\quad m(t) = \sum_k a_kp(t-kT_b)
+    \end{equation}
+     
+    \subsubsection{FSK}
+    FSK is known as \textbf{Frequency shift keying}. This is done by varying the instantaneous frequency,
+    where a $0$ is transmitted with $\omega_{c_0}$ and a $1$ is transmitted with $\omega_{c_1}$. 
+    FSK can be viewed as a sum of two alternating ASK signals, one with carrier $\omega_{c_0}$ and the other 
+    with carrier $\omega_{c_1}$. The binary ASK expression to write a FSK signal is
+    \begin{equation}
+        \varphi_{FSK}(t) = \sum_k a_kp(t-kT_b)\cos\omega_{c_1}t + \sum_k(1-a_k)p(t-kT_b)\cos\omega_{c_0}t
+    \end{equation}
+    where $a_k = 0,1$ is on off keying. The FSK is the superposition of two ASK signals with different 
+    frequencies but complementary amplitudes. 
+
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=6cm, height=7cm]{pskfsk}
+        \caption{Polar $m(t)$ modulated with PSK then FSK}
+    \end{figure}
+
+    \subsection{PSD of Digital Carrier Modulation}
+    In the current section it was shown that ASK, PSK and FSK can be written in the format of 
+    $m(t)\cos\omega_ct$. 
+    \begin{equation}
+        \varphi(t) = m(t)\cos\omega_ct
+    \end{equation}
+    The PSD of $\varphi(t)$ is
+    \begin{equation}
+        S_{\varphi}(f) = \lim_{T \rightarrow \infty} \frac{|\Psi_T (f)|^2}{T}
+    \end{equation}
+    where $\Psi_T (f)$ if the Fourier transform of the truncated signal
+    \begin{equation}
+        \varphi_T(t) = \varphi(t)[u(t+T/2) - u(t-T/2)]
+    \end{equation}
+    \begin{equation}
+        \varphi_T(t) = m(t)[u(t+T/2) - u(t-T/2)]\cos\omega_ct
+    \end{equation}
+    \begin{equation}
+        \varphi_T(t) = m_T(t)cos\omega_ct
+    \end{equation}
+    The PSD of $m_T(t)$ is
+    \begin{equation}
+        S_m(f) = \lim_{T \rightarrow \infty} \frac{|M_T(f)|^2}{T}
+    \end{equation}
+    and then applying the frequency shift from the $\cos$ term,
+    \begin{equation}
+        \Psi_T(f) = \frac{1}{2}[M_T(f-f_c) + M_T(f+f_c)]
+    \end{equation}
+    so finally the PSD of the modulated signal is
+    \begin{equation}
+        S_{\varphi}(f) = \lim_{T\rightarrow\infty} \frac{1}{4T}|M_T(f+f_c) + M_T(f-f_c)|^2
+    \end{equation}
+    $M(f+f_c)$ and $M(f-f_c)$ have zero overlap as $T\rightarrow\infty$ if $f_c$ is larger than the 
+    bandwidth of $M(f)$, so
+    \begin{equation}
+        S_{\varphi}(f) = \frac{1}{4}S_M(f+f_c) + \frac{1}{4}S_M(f-f_c)
+    \end{equation}
+
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=5cm, height=7cm]{psdaskfskpsk}
+        \caption{PSD of ASK (on-off), PSK and FSK (polar)}
+    \end{figure}
+
+    For FSK,
+    \begin{equation}
+        \varphi_{FSK}(t) = \sum_k a_kp(t-kT_b)\cos\omega_{c_1}t + \sum_k(1-a_k)p(t-kT_b)\cos\omega_{c_0}t
+    \end{equation}
+    where baseband signal $m_1 = \sum_k a_kp(t-kT_b)$ and $m_0 = \sum_k (1-a_k)p(t-kT_b)$ the PSD would be
+    \begin{equation}
+        S_{FSK}(f) = \frac{1}{4}S_{M_0}(f+f_c) + \frac{1}{4}S_{M_0}(f-f_c)
+            + \frac{1}{4}S_{M_1}(f+f_c) + \frac{1}{4}S_{M_1}(f-f_c)
+    \end{equation}
+
+    \subsection{Demodulation}
+    \subsubsection{ASK Detection}
+    ASK can be demodulated both coherently (using synchronous detection) or non-coherently with an envelope 
+    detector. The coherent method takes more processing but has better performance, especially when the 
+    SNR is low. When the SNR is high, envelope detection works just as well and is simpler, so coherent
+    demodulation is not used often. 
+    \subsubsection{FSK Detection}
+    Since binary FSK can be viewed as two ASK signals ($a_k, b_k$) and carriers, $f_{c_0}$ and $f_{c_1}$, it
+    can be demodulated coherently or non-coherently. In non-coherent detection, the incoming signal is
+    applied to a pair of narrowband filters, $H_0(f)$ and $H_1(f)$, tuned to $f_{c_0}$ and $f_{c_1}$. Each 
+    filter is followed by an envelope detector. The two methods are shown in the next figure. 
+    
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=13cm, height=7cm]{fskdemod}
+        \caption{Non-coherent and Coherent Demodulation for FSK}
+    \end{figure}
+
+    \subsubsection{PSK Detection}
+    In binary PSK, a $1$ is transmitted by a pulse $A\cos \omega_ct$ and a $0$ is transmitted with a 
+    pulse $A\cos(\omega_ct + \pi) = -A\cos\omega_ct$. The information resides in the phase, as such these
+    signals cannot be demodulated with an envelope detector. The demodulator is shown in the next
+    figure. 
+
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=5cm, height=3cm]{pskdemod}
+        \caption{Coherent Demodulation for PSK}
+    \end{figure}
+
+    \subsubsection{Differential PSK}
+    DPSK, differential PSK uses differential detection, where the receiver detects the relative phase change
+    between successively modulated phases: $\theta_k$ and $\theta_{k-1}$. Since the phase in binary PSK is
+    $0$ or $\pi$, the transmitter can encode the information into the phase difference $\theta_k - \theta_{k-1}$.
+    For example a phase difference of $0$ would represent $0$b and a phase difference of $\pi$ would represent
+    $1$b. This is known as differential encoding. 
+    
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=7cm, height=7cm]{dpsk}
+        \caption{DPSK}
+    \end{figure}
+    
+    In the demodulator, we avoid generation of an LO since
+    the signal is the carrier with a sign ambiguity. We can delay the signal by $T_b$. If the pulse is identical
+    to the previous one, the product 
+    \begin{equation}
+        y(t) = A^2\cos^2\omega_ct = (A^2/2)(1+\cos(2\omega_ct))
+    \end{equation}
+    and low pass filtered to
+    \begin{equation}
+        z(t) = A^2/2
+    \end{equation}
+    and the bit is decided to be $0$.
+    On the other hand if the pulse and the previous pulse are opposite polarity, 
+    \begin{equation}
+        y(t) = -A^2\cos^2\omega_ct = -(A^2/2)(1+\cos(2\omega_ct))
+    \end{equation}
+    and low pass filtered to
+    \begin{equation}
+        z(t) = -A^2/2
+    \end{equation}
+    and the bit is decided to be $1$.
+
+
+\end{document}
