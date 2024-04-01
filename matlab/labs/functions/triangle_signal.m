@@ -19,10 +19,6 @@
 
 function tri = triangle_signal(t)
 
-    % Initialize output wave
-    tri = zeros(length(t), 1);
-
     % Create Triangle Wave
-    tri(find(t > -.5)) = 1-2*abs(t(find(t > -.5)));
-    tri(find(t > .5))  = 0;
+    tri = (1-abs(t)) .* (t >=-1) .* (t<1);
 end

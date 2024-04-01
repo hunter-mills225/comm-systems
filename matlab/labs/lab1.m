@@ -170,6 +170,3 @@ title('Spectrum of Jimi Hendrix Guitar')
 xlabel('Frequency (Hz)')
 ylabel('Amp')
 xlim([-10000, 10000])
-
-
-
