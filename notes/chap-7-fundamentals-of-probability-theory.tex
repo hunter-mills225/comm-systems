@@ -1,0 +1,491 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\renewcommand{\baselinestretch}{1}
+\setlength{\textheight}{9in}
+\setlength{\textwidth}{6.5in}
+\setlength{\headheight}{0in}
+\setlength{\headsep}{0in}
+\setlength{\topmargin}{0in}
+\setlength{\oddsidemargin}{0in}
+\setlength{\evensidemargin}{0in}
+\setlength{\parindent}{.3in}
+\graphicspath{{images/}}
+
+
+\title{Communication Systems \\
+    \large Chapter 6 Principles of Digital Data Transmission }
+\author{Hunter Mills}
+\date{\today}
+
+\begin{document}
+    \maketitle
+
+    \medskip
+        
+    The previous chapters have only focused on deterministic signals which cannot relay information since
+    the information is already known. The higher the signal uncertainty, the more information it can convey. 
+    In addition to information bearing signals, noise signals in a system are also unpredictable (cannot be 
+    subtracted). The unpredictable message and noise signals are known as \textbf{random processes}.
+
+    \section{Concept of Probability}
+    Some terminologies needed for probability. \textbf{experiments} are used in probability to describe a process
+    whose outcome cannot be fully predicted. An experiment may have server separately identifiable \textbf{
+    outcomes}. An \textbf{event} is a subset of outcomes that share some common characteristic. An event 
+    occurs if the outcome of an experiment belongs to the specific subset of outcomes defining the event.
+
+    Set theory is used in probability. The \textbf{sample space} $\mathcal{S}$ is a collection of all
+    possible and distinct outcomes of an experiment. The sample space $\mathcal{S}$ specifies the 
+    experiment. Each outcome is an \textbf{element} or \textbf{sample point} of this space $\mathcal{S}$.
+    In the experiment of rolling a die, the sample space consists of $\zeta_1$, $\zeta_2$, $\zeta_3$, 
+    $\zeta_4$, $\zeta_5$, $\zeta_6$, where $\zeta_i$ is the outcome when a 'number $i$ is thrown'. An
+    event on the other hand is a subset of $\mathcal{S}$, 'an odd number is thrown', denoted by $A_{odd}$.
+    \begin{equation}
+        A_{odd} = (\zeta_1, \zeta_3, \zeta_5) \quad\quad A_{even} = (\zeta_2, \zeta_4, \zeta_6)
+    \end{equation}
+    An event, a number $\le 4$ is denoted as
+    \begin{equation}
+        B =  (\zeta_1, \zeta_2 \zeta_3, \zeta_4)
+    \end{equation}
+    The complement of any event $A$ is denoted $A^c$ and is the event containing all points not in $A$. 
+    For example, $A_{odd}^c = A_{even}$. An event that has no sample points is a \textbf{null event} and is
+    denoted as $\phi = \mathcal{S}^c$.
+
+    The \textbf{union} of events $A$ and $B$, denoted by $A \cup B$, is the event that contains all points
+    in $A$ and $B$ (having an outcome of either $A$ or $B$).
+    \begin{equation}
+        A_{odd} \cup B = (\zeta_1, \zeta_2 \zeta_3, \zeta_4, \zeta5)
+    \end{equation}
+
+    The intersection of events $A$ and $B$, denoted by $A \cap B$, or $AB$ is the event that contains
+    points common to $A$ and $B$. This is the event, outcome is both $A$ and $B$, and also is known as the
+    \textbf{joint event}. 
+    \begin{equation}
+        A_{even}B = (\zeta_2, \zeta_4)
+    \end{equation}
+    \begin{equation}
+        A \cap B = B \cap A
+    \end{equation}
+    If events $A$ and $B$ are such that 
+    \begin{equation}
+        A \cap B = \phi
+    \end{equation}
+    $A$ and $B$ are said to be \textbf{disjoint} or \textbf{mutually exclusive} ($A$ and $B$ cannot occur 
+    simultaneously).
+
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=7cm, height=5cm]{prob}
+        \caption{Complement, Union and Intersection}
+    \end{figure}
+
+    \subsection{Relative Frequency and Probability}
+    Although the outcome of a random experiment is unpredictable, there is a statistical regularity of the outcomes.
+    For example a coin flipped many times has the relative frequency of heads/tails of $1/2$. Let $A$ be one
+    of the events of interest in an experiment and N independent trials, and if the event $A$ occurs in $N(A)$
+    of the trials then the fraction 
+    \begin{equation}
+        f(A) = \lim_{N\rightarrow \infty}\frac{N(A)}{N}
+    \end{equation}
+    is the \textbf{relative frequency} of the event $A$. The probability of an event $A$ has the same connotations
+    as the relative frequency, this the probability of $A$ is
+    \begin{equation}
+        P(A) = \lim_{N\rightarrow \infty}\frac{N(A)}{N}
+    \end{equation} 
+    and it follows that
+    \begin{eqnarray}
+        0 \le P(A) \le 1
+    \end{eqnarray}
+    If $A$ and $B$ are mutually exclusive, the event $A \cup B$ occurs in $N(A) + N(B)$ trials and
+    \begin{equation}
+        P(A \cup B) = \lim_{N\rightarrow \infty}\frac{N(A) + N(B)}{N}
+    \end{equation}
+    \begin{equation}
+        P(A \cup B) = P(A) + P(B) \quad \textrm{if} \quad A \cap B = \phi
+    \end{equation}
+    For more than two mutually exclusive events where
+    \begin{equation}
+        A_i \cap A_j = \phi \quad \textrm{if} \quad i \neq j
+    \end{equation}
+    \begin{equation}
+        P(\underset{i}{\cup}A_i) = \sum_iP(A_i)
+    \end{equation}
+    An important concept in probability is that
+    \begin{equation}
+       P(\mathcal{S}) = 1 
+    \end{equation}
+
+    \subsection{Conditional Probability and Independent Events}
+    \subsubsection{Conditional Probability}
+    It often happens that the probability of one event if influenced by another event. The \textbf{conditional 
+    probability}, $P(B|A)$ (probability of $B$ given $A$), is the probability of event $B$ when $A$ has occurred.
+    \begin{equation}
+        P(A \cap B) = P(A)P(B|A)
+    \end{equation} 
+    \begin{equation}
+        P(A|B) = \frac{P(A)P(B|A)}{P(B)}
+    \end{equation}
+    \begin{equation}
+        P(B|A) = \frac{P(B)P(A|B)}{P(A)}
+    \end{equation}
+    The above equations are known as \textbf{Bayes Rule}.
+    
+    \subsubsection{Multiplication Rule for Conditional Probabilities}
+    Given events $A_1$, $A_2$, ... , $A_n$ and $A_1A_2$...$A_n \ne \phi$ then
+    \begin{equation}
+        P(A_1A_2...A_n) = \frac{P(A_1A_2...A_n)}{P(A_1A_2...A_{n-1})} *  
+            \frac{P(A_1A_2...A_{n-1})}{P(A_1A_2...A_{n-2})} ... *  \frac{P(A_1A_2)}{P(A_1)}P(A_1)
+    \end{equation}
+    \begin{equation}
+        P(A_1A_2...A_n) = p(A_n|A_1A_2...A_{n-1})*P(A_{n-1}|A_1A_2...A_{n-2})...*P(A_2|A_1)P(A_1)
+    \end{equation}
+
+    \subsubsection{Independent Events}
+    Unlike the previous section some events occurrence does not influence another event. The event $B$ is 
+    said to be \textbf{independent} iff
+    \begin{equation}
+        P(A\cap N) = P(A)P(B)
+    \end{equation}
+    So it follows
+    \begin{equation}
+        P(B|A) = P(B)
+    \end{equation}
+
+    \subsection{Bernoulli Trials}
+    In Bernoulli trials, if $A$ occurs we call it a success and $P(A) = p$ where $p$ if the probability of 
+    success. If $q$ is the probability of failure the $q=1-p$. To find the probability of $k$ successes in 
+    $n$ (Bernoulli) trials then 
+    \begin{equation}
+        P(k \textrm{successes in } n \textrm{trials}) = \binom{n}{k}p^k(1-p)^{n-k} = \frac{n!}{k!(n-k)!}p^k(q)^{n-k}
+    \end{equation}
+
+    \subsection{The Total Probability Theorem}
+    $\mathcal{S}$ can be partitioned into $n$ mutually exclusive events $A_1$,...,$A_n$. Thus
+    \begin{equation}
+        \underset{i=1}{\overset{n}{\cup}}A_i = S \quad \textrm{and} \quad A_i \cap A_j \quad \textrm{if} \quad i \ne j
+    \end{equation}
+    The probability of event $B$ is
+    \begin{equation}
+        P(B) = \sum_{i=1}^{n}P(B|A_i)P(A_i)
+    \end{equation}
+    Bayes theorem for the total probability theorem is
+    \begin{equation}
+        P(A_j|B) = \frac{P(B|A_j)P(A_j)}{P(B)} = \frac{P(B|A_j)P(A_j)}{\sum P(B|A_i)P(A_i)}
+    \end{equation}
+    The probability $P(A_j|B)$ is known as the posterior probability, the probability that $B$ may be caused
+    be $A_j$.
+
+    \section{Random Variables}
+    It is connivent to assign sample points real numbers, so $\chi(\zeta_i)$ would represent the sample points of
+    $\zeta_i$ ($i=1,2...m)$. This $\chi(.)$ if a function that maps sample points $(\zeta_i)$ to real numbers
+    $x_i$. We now have a \textbf{random variable} that takes on the values $x_i$. The probability of 
+    a random variable (RV) $\chi$ taking a value of $\chi_i$ is denoted by $P_{\chi}(x_i) = $ probability
+    of $\chi = x_i$.
+
+    \subsection{Discrete Random Variables}
+    A RV is discrete if there exists a distinct number of outcomes $\chi_i$ such that
+    \begin{equation}
+        \sum_iP_{\chi}(x_i) = 1
+    \end{equation}
+
+    This can be extended to two random variables $\chi$ and $\gamma$. The joint probability $P_{\chi\gamma}
+    (x_i, y_i)$ is the probability that $\chi = x_i$ and $\gamma = y_i$. For the general case when $\chi$
+    can take values $x_i$ and $\gamma$ can take values $y_j$,
+    \begin{equation}
+        \sum_i \sum_jP_{\chi\gamma}(x_i, y_i) = 1
+    \end{equation}
+
+    \subsection{Conditional Probabilities}
+    If $\chi$ and $\gamma$ are two RVs then the probability of $\chi = x_i$ given $\gamma = y_j$ is denoted 
+    as $P_{\chi|\gamma}(x_i|y_j)$ and
+    \begin{equation}
+        \sum_iP_{\chi|\gamma}(x_i|y_j) = \sum_jP_{\gamma|\chi}(y_j|x_i) = 1
+    \end{equation}
+    \begin{equation}
+        P_{\chi\gamma}(x_i, y_j) = P_{\chi|\gamma}(x_i|y_j)P_{\gamma}(y_j) = P_{\gamma|\chi}(y_j|x_i)P_{\chi}(x_i)
+    \end{equation}
+    and from Bayes Rule
+    \begin{equation}
+        P_{\chi|\gamma}(x_i|y_j) = \frac{P_{\chi\gamma}(x_i, y_j)}{P_{\gamma}(y_j)}
+    \end{equation}
+    The probability $P_{\chi}(x_i)$ and $P_{\gamma}(y_i)$
+    \begin{equation}
+        P_{\gamma}(y_j) = \sum_iP_{\chi\gamma}(x_i, y_j)
+    \end{equation}
+    \begin{equation}
+        P_{\chi}(x_i) = \sum_jP_{\chi\gamma}(x_i, y_j)
+    \end{equation}
+    are called \textbf{marginal probabilities}. 
+
+    \subsection{Cumulative Distribution Function}
+    The \textbf{cumulative distribution function (CDF)} $F_{\chi}(x)$ of a RV $\chi$ is the probability that
+    $\chi$ takes a value less than or equal to $x$.
+    \begin{equation}
+        F_{\chi}(x) = P(\chi \le x)
+    \end{equation}
+    The CDF has the following properties:
+    \begin{itemize}
+        \item \textbf{1}    - $F_{\chi}(x) \ge 0$
+        \item \textbf{2}    - $F_{\chi}(\infty) = 1$
+        \item \textbf{3}    - $F_{\chi}(-\infty) = 0$
+        \item \textbf{4}    - $F_{\chi}(x)$ is a non-decreasing function
+    \end{itemize}
+    Point 4 leads to 
+    \begin{equation}
+        F_{\chi}(x_1) \le F_{\chi}(x_2) \quad \textrm{for} \quad x_1 \le x_2
+    \end{equation}
+    \begin{equation}
+        F_{\chi}(x_2) = F_{\chi}(x_1) + P(x_1 < \chi < x_2)
+    \end{equation}
+
+    \subsection{Continuous Random Variables}
+    A continuous RV $\chi$ can take any value in a certain interval. Since there is an infinite number of values in that interval
+    \begin{equation}
+        P_{\chi}(x_i) = 0
+    \end{equation}
+    The CDF of a continuous RV has the same equations that the discrete RV has.
+
+    \subsubsection{Probability Density Function}
+    The PDF is the probability that the RV will take a value in a given range. The PDF $p_{\chi}(x)$, is defined as
+    \begin{equation}
+        p_{\chi}(x) = \frac{dF_{\chi}(x)}{dx}
+    \end{equation}
+    And the CDF $F_{\chi}(x)$ is defined as  
+    \begin{equation}
+        F_{\chi}(x) = \int_{-\infty}^{x} p_{\chi}(u)du
+    \end{equation}
+    Some other useful formulas are
+    \begin{equation}
+        P(x_1 \le \chi \le x_2) = F_{\chi}(x_2) - F_{\chi}(x_1) = \int_{x_1}^{x_2}
+    \end{equation}
+    \begin{equation}
+        \int_{-\infty}^{\infty}p_{\chi}(x)dx = 1
+    \end{equation}
+    
+    \subsection{Discrete PDF}
+    For an RV $\chi$ with values $x_i$ and probabilities $a_i$ the PDF is
+    \begin{equation}
+        p_{\chi}(x) = \sum_{r=1}^{n}a_r \delta(x-x_r)
+    \end{equation}
+    since the CDF is a step function, the PDF (derivative of the CDF) are impulse functions.
+
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=5cm, height=7cm]{dis_cdf}
+        \caption{CDF and PDF of Continuous RV}
+    \end{figure}
+
+    \subsection{ The Gaussian (Normal) Random Variable}
+    The PDF
+    \begin{equation}
+        p_{\chi}(x) = \frac{1}{\sqrt{2\pi}}e^{-x^2/2}
+    \end{equation}
+    is known as the \textbf{Gaussian} or \textbf{Normal} distribution pdf. It has zero mean and variable of $1$. 
+
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=6cm, height=9cm]{gauss}
+        \caption{Normal PDF, Q(y) and CDF}
+    \end{figure}
+
+    The CDF is
+    \begin{equation}
+        F_{\chi}(x) = \frac{1}{\sqrt{2\pi}}\int_{-\infty}^{x}e^{-x^2/2}dx
+    \end{equation}
+    Which cannot be evaluated and must be computed numerically. It is connivent to use the function $Q(.)$
+    \begin{equation}
+        Q(y) = \frac{1}{\sqrt{2\pi}}\int_{y}^{\infty}e^{-x^2/2}dx
+    \end{equation}
+    The shaded area in figure 3 is $Q(y)$. 
+    \begin{equation}
+        Q(-y) = 1- Q(y)
+    \end{equation}
+    \begin{equation}
+        F_{\chi}(x) = 1-Q(x)
+    \end{equation}
+    The more general Normal Distribution takes two parameters $m, \sigma$,
+    \begin{equation}
+        p_{\chi}(x) = \frac{1}{\sigma\sqrt{2\pi}}e^{-(x-m)^2/2\sigma^2}
+    \end{equation}
+    \begin{equation}
+        F_{\chi}(x) = \frac{1}{\sqrt{2\pi}}\int_{-\infty}^{(x-m)/\sigma}e^{-z^2/2}dz = 1 - Q(\frac{x-m}{\sigma})
+    \end{equation}
+    \begin{equation}
+        P(\chi > x) = Q(\frac{x-m}{\sigma})
+    \end{equation}
+    \begin{equation}
+        P(\chi \le x) = 1-Q(\frac{x-m}{\sigma})
+    \end{equation}
+    The Gaussian distribution is important in communications since it can model most noise. 
+
+    \subsection{Joint Distribution}
+    For two RV's $\chi$ and $\gamma$, the CDF $F_{\chi\gamma}(x, y)$ is defined as
+    \begin{equation}
+        F_{\chi\gamma}(x, y) \doteq P(\chi \le x \textrm{ and } \gamma \le y)
+    \end{equation}
+    and the joint PDF $p_{\chi\gamma}(x, y)$ as
+    \begin{equation}
+        p_{\chi\gamma}(x, y) = \frac{\partial^2}{\partial x\partial y}F_{\chi\gamma}(x, y)
+    \end{equation}
+    The probability of observing $\chi$ as $(x, x+\Delta y]$ and $\gamma$ as $(y, y+\Delta y]$ is given by the volume 
+    under the joint PDF.
+    \begin{equation}
+        P(x_1 \le \chi \le x_2, y_1 \le \gamma \le y_2) = \int_{x_1}^{x_2}\int_{y_1}^{y_2}p_{\chi\gamma}(x, y)dx dy
+    \end{equation}
+    The independent probabilities, $p_{\chi}(x)$ and $p_{\gamma}(y)$ can be obtained from $p_{\chi\gamma}(x, y)$ and
+    are called \textbf{marginal densities}. The PDF and CDF for $\chi$ is shown below, but still holds for $\gamma$.
+    \begin{equation}
+        p_{\chi}(x) = \int_{-\infty}^{\infty}p_{\chi\gamma}(x, y)dy
+    \end{equation}
+    \begin{equation}
+        F_{\chi}(x) = F_{\chi\gamma}(c, \infty)
+    \end{equation}
+
+    \subsection{Conditional Densities}
+    Bayes rule for continuous conditional probabilities is
+    \begin{equation}
+        p_{\chi|\gamma}(x|y) = \frac{p_{\gamma|\chi}(y|x)p_{\chi}(x)}{p_{\gamma}(y)}
+    \end{equation}
+
+    \subsection{Independent Random Variables}
+    The continuous RV's $\chi$ and $\gamma$ are independent if 
+    \begin{equation}
+        p_{\chi|\gamma}(x|y) = p_{\chi}(x)
+    \end{equation}
+    and implies 
+    \begin{equation}
+        p_{\chi\gamma}(x, y) = p_{\chi}(x)p_{\gamma}(y)
+    \end{equation}
+    and 
+    \begin{equation}
+        F_{\chi\gamma}(x, y) = F_{\chi}(x)F_{\gamma}(y)
+    \end{equation}
+
+    \section{Statistical Means}
+    The statistical mean $\bar{\chi}$ is defined as
+    \begin{equation}
+        \bar{\chi} = \sum_{i=1}^{N}x_iP_{\chi}(x_i)
+    \end{equation}
+    and is also called the \textbf{average} or \textbf{expected value}. It can also be denoted as
+    \begin{equation}
+        \bar{\chi} = E[\chi]
+    \end{equation}
+    If $\chi$ is continuous then
+    \begin{equation}
+        \bar{\chi} = \int_{-\infty}^{\infty}xp_{\chi}(x)dx
+    \end{equation}
+    For a Gaussian RV the mean is $E[\chi] = m$.
+
+    \subsection{Mean of a Function of RV's}
+    We may seek to find the mean value of $\gamma$ where that is a function of $\chi$, ie $\gamma = g(\chi)$. 
+    \begin{equation}
+        \bar{\gamma} = \overline{g(\chi)} = \sum_{i=1}^{N}g(x_i)P_{\chi}(x_i)
+    \end{equation}
+    And for the case of two continuous RV's
+    \begin{equation}
+        \overline{g(\chi, \gamma)} = \int\int g(x, y)p_{\chi\gamma}(x, y)dx dy
+    \end{equation}
+
+    \subsection{Mean of the Sum}
+    \begin{equation}
+        E[\chi + \gamma] = E[\chi] + E[\gamma]
+    \end{equation}
+    \subsection{Mean of the Product of two Functions}
+    \begin{equation}
+        \overline{g_1(\chi)g_2(\gamma)} = \int\int g_1(\chi)g_2(\gamma)p_{\chi\gamma}(x, y)dx dy
+    \end{equation}
+    and if $\chi$ and $\gamma$ are independent then
+    \begin{equation}
+        \overline{g_1(\chi)g_2(\gamma)} =  \overline{g_1(\chi)}\overline{g_2(\gamma)}
+    \end{equation}
+
+    \subsection{Moments}
+    The $n_{th}$ moment of an RV $\chi$ is defined as the mean value of $\chi^n$.
+    \begin{equation}
+        \overline{\chi^n} = \int x^np_{\chi}(x)dx
+    \end{equation}
+    and the $n^{th}$ central moment is
+    \begin{equation}
+        \overline{(\chi-\bar{\chi})^n} = \int (x - \bar{\chi})^np_{\chi}(x)dx
+    \end{equation}
+    The second central moment of an RV is called the \textbf{variance} and is denoted $\sigma_{\chi}^2$ where 
+    $\sigma_{\chi}$ is the \textbf{standard deviation}.
+    \begin{equation}
+        \sigma_{\chi} = \overline{x^2} - \bar{\chi}^2
+    \end{equation}
+    \subsection{Variance of a Sum of Independent RV's}
+    If $\zeta = \chi + \gamma$ then
+    \begin{equation}
+        \sigma_{\zeta}^2 = \sigma_{\chi}^2 + \sigma_{\gamma}^2
+    \end{equation}
+
+    \subsection{Chebyshev Inequality}
+    The standard deviation is a measure of the width of the PDF. FOr a zero mean RV $\chi$
+    \begin{equation}
+        P(|\chi| \le k\sigma_{\chi}) \ge 1 - \frac{1}{k^2}
+    \end{equation}
+
+    \section{Correlation}
+    Correlation determines the nature of dependence between two RV's. The covariance $\sigma_{\chi\gamma}$ is defined as
+    \begin{equation}
+        \sigma_{\chi\gamma} = \overline{(\chi-\bar{\chi})(\gamma-\bar{\gamma})}
+    \end{equation}
+    \begin{equation}
+        \sigma_{\chi\gamma} = \overline{\chi\gamma} - \bar{\chi}\bar{\gamma}
+    \end{equation}
+    The correlation coefficient is
+    \begin{equation}
+        \rho_{\chi\gamma} = \frac{\sigma_{\chi\gamma}}{\sigma_{\chi}\sigma{\gamma}}
+    \end{equation}
+    If $\chi$ and $\gamma$ are uncorrelated then $\rho_{\chi\gamma} = 0$.
+    \begin{equation}
+        -1 \le \rho_{\chi\gamma} \le 1
+    \end{equation}
+
+    \subsection{Independence vs Uncorrelatedness}
+    Independent RV's are uncorrelated but uncorrelated RV's are not necessarily independent. \textbf{In one case independence 
+    and uncorrelatedness are equivalent when the RV $\chi$ and $\gamma$ are jointly Gaussian.}
+
+    \subsection{Mean Square of the Sum of Uncorrelated RV's}
+    If $\chi$ and $\gamma$ are uncorrelated then for $\zeta = \chi + \gamma$
+    \begin{equation}
+        \sigma_{\zeta}^2 =  \sigma_{\chi}^2 +  \sigma_{\gamma}^2
+    \end{equation}
+    That is, the variance of the sum is the sum of the variances for uncorrelated RV's.
+
+    \section{Sum of RV's}
+    It is useful to characterize an RV $\zeta$ as the sum of $\chi$ and $\gamma$. 
+    \begin{equation}
+        \zeta = \chi + \gamma
+    \end{equation}
+    \begin{equation}
+        F_{\zeta}(z) = P(\zeta \le z) = P(\chi \le \infty, \gamma \le z-x)
+    \end{equation}
+    \begin{equation}
+        F_{\zeta}(z) = \int dx \int_{-\infty}^{z-x}p_{\chi\gamma}(x, y)dy
+    \end{equation}
+    and 
+    \begin{equation}
+        p_{\zeta}(z) = \frac{dF_{\zeta}(z)}{dz} = \int p_{\chi\gamma}(x, z-x)dx
+    \end{equation}
+    And if they are independent then 
+    \begin{equation}
+        p_{\chi\gamma}(x, z-x) = p_{\chi}(x)p_{\gamma}(z-x)
+    \end{equation}
+    and 
+    \begin{equation}
+        p_{\zeta}(z) = \int p_{\chi}(x)p_{\gamma}(z-x)dx
+    \end{equation}
+
+    \section{Central Limit Theorem}
+    Under certain conditions, the sum of a large number of RV's tends to be a Gaussian RV. Note that for a sum of RV, 
+    \begin{equation}
+        \tilde{\chi_n} = \frac{\chi_1 + ... + \chi_N}{n}
+    \end{equation}
+    is known as the sample mean. The sample mean of any distribution with nonzero finite variances converges to a Gaussian
+    distribution with mean $\mu$ and a decreasing variance $\sigma^2/n$. In other words, regardless of the true 
+    distribution of $\chi_i$, $\sum_i \chi_i$ can be approximated by a Gaussian distribution with mean $n\mu$ and variance
+    $n\sigma^2$.
+
+\end{document}

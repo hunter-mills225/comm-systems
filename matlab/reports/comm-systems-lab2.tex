@@ -1,0 +1,420 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\renewcommand{\baselinestretch}{1}
+\setlength{\textheight}{9in}
+\setlength{\textwidth}{6.5in}
+\setlength{\headheight}{0in}
+\setlength{\headsep}{0in}
+\setlength{\topmargin}{0in}
+\setlength{\oddsidemargin}{0in}
+\setlength{\evensidemargin}{0in}
+\setlength{\parindent}{.3in}
+\graphicspath{{../../notes/images/}}
+
+
+\title{Communication Systems Lab 2}
+\author{Hunter Mills}
+\date{\today}
+
+\begin{document}
+    \maketitle
+
+    \medskip
+
+    \section{Introduction}
+    Analog modulation techniques were an important part in the communication protocols that we use today.
+    Some of the more common analog modulation schemes were Double Sideband Amplitude modulation, Amplitude
+    Modulation, AM Vestigial and FM. AM and FM were very common and used in radios and communication systems.
+    This lab deals with modulating a message signal with DSB, AM and FM modulation techniques. 
+    \section{Double Sideband}
+    Double Sideband AM is a technique that modulates the message signal by multiplying it with a carrier
+    signal that would shift the spectrum up to the carrier frequency. The formula for DSB modulation is
+    \begin{equation}
+        s_{DSB}(t) = m(t)\cos2\pi f_ct
+    \end{equation}
+    The message signal used for each modulation technique is shown in figure 1.
+    \begin{figure}[!htb]
+        \centering
+        \includegraphics[width=7cm, height=5cm]{message}
+        \caption{Message Signal for DSB, AM and FM}
+    \end{figure}
+    After multiplying the the signal the modulated signal and spectrum are shown in figure 2.
+    \begin{figure}[!htb]
+        \centering
+        \includegraphics[width=7cm, height=5cm]{dsb_message}
+        \caption{DSB Modulation}
+    \end{figure}
+    In this lab the demodulation method is using a coherent LO to down convert the received signal back to
+    base-band. 
+    \begin{equation}
+        m(t) = s_{DSB}(t)\cos2\pi f_ct
+    \end{equation}
+    which is then low pass filtered to remove the images, Figure 3 shows the received signal and its spectrum
+    \begin{figure}[!htb]
+        \centering
+        \includegraphics[width=7cm, height=5cm]{dsb_demod}
+        \caption{DSB Demodulation}
+    \end{figure}
+
+
+    \section{Amplitude Modulation}
+
+    AM is very similar to DSB but it uses a DC offset to modulate the carrier into the message.
+    \begin{equation}
+        s_{AM} = [A + m(t)]*\cos2\pi f_ct
+    \end{equation}
+    \begin{figure}[!htb]
+        \centering
+        \includegraphics[width=7cm, height=5cm]{am_message}
+        \caption{AM Modulation}
+    \end{figure}
+    From figure 4, you can see that $m(t)$ was modulated along with a DC term by the carrier. In the spectrum
+    you can see the peak at $f_c$ whereas in DSB there is no carrier spike since the carrier is not 
+    modulated into the transmitted message. 
+
+    For AM demodulation, there are a couple techniques that could be used. In this lab we use the non-
+    coherent envelope detector. The first step is to rectify the signal so its fully positive and then 
+    the rectified signal is low pass filtered to remove the carrier. 
+    \begin{figure}[!htb]
+        \centering
+        \includegraphics[width=7cm, height=5cm]{am_demod}
+        \caption{AM Modulation}
+    \end{figure}
+
+    \subsection{Discussion}
+    \subsubsection{What is the modulation index of the AM signal?}
+
+    The modulation index is calculated using
+    \begin{equation}
+        \mu = \frac{m_P}{A}
+    \end{equation}
+    where $m_p = 1$ and $A = 1$ so the modulation index $\mu = 1$.
+
+    \subsubsection{Could you set the modulation index to .5 and demodulate the signal? How about
+    1.5? Why or why not?}
+
+    For an AM signal to be demodulated, the modulation index must be $0 \le \mu \le 1$. So you would
+    be able to demodulate the signal when $\mu = 0.5$ but not when $\mu = 1.5$. This is because 
+    the envelope would cross $y = 0$ so the envelope would be incorrectly demodulated. 
+
+    \subsubsection{What is the difference between the envelope detector and coherent demodulation? 
+    What would happen is you demodulated the DSB signal with an envelope detector?}
+
+    The envelope detector consists of a rectifier which is followed by a low pass filter to find the 
+    envelope of the signal. Whereas the coherent demodulator consists of a mixer with the carrier 
+    frequency and then a low pass filter. The coherent demodulator needs to have a coherent 
+    LO for the mixer. If a DSB signal was demodulated with a envelope detector then, since the DSB
+    signal is centered around 0 (no DC offset), the envelope would not correlate to the sent signal.
+
+    \section{Frequency Modulation}
+    In this section of the lab, the same message signal is used that was shown in figure 1. The FM 
+    modulated signal (time and frequency domains) are shown in figure 6. FM signals are modulated using
+    \begin{equation}
+        \varphi_{FM}(t) = A\cos [\omega_ct + k_f\int_{-\infty}^{t}m(\alpha)d\alpha]
+    \end{equation}
+
+    \begin{figure}[!htb]
+        \centering
+        \includegraphics[width=7cm, height=5cm]{fm_mess}
+        \caption{FM Modulation}
+    \end{figure}
+
+    The Phase modulated signal is shown in figure 7. PM signals are modulated with
+    \begin{equation}
+        \varphi_{PM}(t) = A\cos[\omega_ct+k_pm(t)]
+    \end{equation}
+
+    \begin{figure}[!htb]
+        \centering
+        \includegraphics[width=7cm, height=5cm]{fm_mess}
+        \caption{FM Modulation}
+    \end{figure}
+
+    The FM signal is demodulated by taking the derivative of the received signal and then passing
+    that through an envelope detector. The demodulated message is shown in figure 8.
+
+    \begin{figure}[!htb]
+        \centering
+        \includegraphics[width=7cm, height=5cm]{fm_demon}
+        \caption{FM Modulation}
+    \end{figure}
+
+    \subsection{Discussion}
+    \subsubsection{What is the bandwidth of the FM and PM signals? How does that compare to the
+    theoretical bandwidth of $B_y = 2(\delta F + B_x)$ where $B_x = 25Hz$?}
+
+    The bandwidth of the FM and PM signals seem to be approximately 200Hz. The frequency deviation
+    $\Delta F = k_f \frac{m_{max}-m_{min}}{4\pi} = 160\pi / 2\pi = 80$. The theoretical bandwidth is
+    $185$Hz which is fairly close to the measured bandwidth. 
+
+    \subsubsection{Describe the FM demodulator.}
+
+    The FM demodulator first takes the derivative of the received signal. This pulls out the message 
+    content from the frequency. This is then passed into a envelope detector where the it is rectified 
+    and low pass filtered to demodulate the message. 
+
+    \section{Try it Yourself}
+    \subsection{Increase $k_f$ by a factor of $2$}
+    \subsubsection{What happens to the modulated signal in the time domain?}
+    In the time domain the change in the frequency is more noticeable since the frequency deviation doubled
+    from the previous value.
+    \subsubsection{What happens to the signal spectrum?}
+    The signal spectrum also doubles in width, with the sidelobes being centered around $100$Hz from the
+    center frequency. The new bandwidth is about $400$Hz.
+    \subsection{Can you demodulate this signal with the same demodulator?}
+    No this signal is no longer able to be demodulated with this receiver. The most negative part of the 
+    rectified signal (also the lowest frequency) shows that the signal is no longer the same shape as the 
+    transmitted message. One way I found to fix this was to use the abs function to rectify the signal instead
+    of only taking the positive values as in the matlab script. 
+
+    \section{Conclusion}
+    In conclusion, this lab has shown the main aspects of the modulator and demodulator for DSB, AM and 
+    FM. These analog communication standards were widely used and are a building block for more complex
+    communication protocols. 
+
+    \section{Appendix}
+    \subsection{DSB}
+        \begin{verbatim}
+            %!----------------------------
+            %! @file      DSBdemfilt.m
+            %!----------------------------
+            
+            %! Adding path to functions
+            addpath(genpath('functions'));
+            
+            %! Script Variables
+            ts      = 1e-4;
+            fs      = 1/ts;
+            fc      = 300;
+            t       = -.04 : ts : .04;
+            Lfft    = length(t); Lfft = 2^ceil(log2(Lfft) + 1);
+            BW_m    = 150; % Bandwidth of the triangle function in Hz
+            f       = (-Lfft/2 : Lfft/2-1) * fs / Lfft;
+            
+            %-----------------
+            %! Message
+            %-----------------
+            m_sig  = triangle_signal((t+.01)/.01) - triangle_signal((t-.01)/.01);
+            M_fre = fftshift(fft(m_sig, Lfft));
+            
+            %-----------------
+            %! Modulation
+            %-----------------
+            s_dsb = m_sig .* cos(2*pi*fc*t);
+            S_dsb = fftshift(fft(s_dsb, Lfft));
+            
+            %-----------------
+            %! Demodulation
+            %-----------------
+            % Multiply with carrier
+            s_dem = 2 * s_dsb .* cos(2*pi*fc*t);
+            S_dem = fftshift(fft(s_dem, Lfft));
+            
+            % Low pass filter
+            h     = fir1(40, BW_m / fs);
+            s_rec = filter(h, 1, s_dem);
+            S_rec = fftshift(fft(s_rec, Lfft));
+            
+            %-----------------
+            %! Plot
+            %-----------------
+            Trange = [-.025 .025 -2 2]; % Time domain range for plots
+            Frange = [-700 700 0 200];  % Frequency domain range for plots
+            
+            % 1.1 Plot baseband signal in time and freq domain
+            figure(1)
+            subplot(2,1,1)
+            plot(t, m_sig)
+            title('m(t)'); ylabel('Amp'); xlabel('Time (s)'); axis(Trange);
+            subplot(2,1,2)
+            plot(f, abs(M_fre))
+            title('M(f)'); ylabel('Amp'); xlabel('Frequency (Hz)'); axis(Frange);
+            
+            % 1.2 Plot AM signal in t and f
+            figure(2)
+            subplot(2,1,1)
+            plot(t, s_dsb)
+            title('s(t)'); ylabel('Amp'); xlabel('Time (s)'); axis(Trange);
+            subplot(2,1,2)
+            plot(f, abs(S_dsb))
+            title('S(f)'); ylabel('Amp'); xlabel('Frequency (Hz)'); axis(Frange);
+            
+            % 1.3 Plot Rx signal in freq domain, filtered Rx signal in freq and time
+            figure(3)
+            subplot(3,1,1)
+            plot(f, abs(S_dem))
+            title('S_{dem}(f) Pre-filter'); ylabel('Amp'); xlabel('Freq (Hz)'); axis(Frange);
+            subplot(3,1,2)
+            plot(f, abs(S_rec))
+            title('S_{rec}(f) Post-filt'); ylabel('Amp'); xlabel('Frequency (Hz)'); axis(Frange);
+            subplot(3,1,3)
+            plot(t, s_rec)
+            title('s_{rec}(t) Post-filt'); ylabel('Amp'); xlabel('Time (s)'); axis(Trange);
+        \end{verbatim}
+
+    \subsection{AM}
+        \begin{verbatim}
+            %!---------------------------------
+            %! @file      AMdemfilt.m
+            %!---------------------------------
+            
+            %! Adding path to functions
+            addpath(genpath('functions'));
+            
+            %! Script Variables
+            ts    = 1e-4;
+            fs    = 1/ts;
+            fc    = 500;
+            t     = -.04 : ts : .04;
+            Lfft  = length(t); Lfft = 2^ceil(log2(Lfft) + 1);
+            BW_m  = 150; % Bandwidth of the triangle function in Hz
+            f     = (-Lfft/2 : Lfft/2-1) * fs / Lfft;
+            
+            %-----------------
+            %! Message
+            %-----------------
+            m_sig = triangle_signal((t+.01)/.01) - triangle_signal((t-.01)/.01);
+            M_sig = fftshift(fft(m_sig, Lfft));
+            
+            %-----------------
+            %! Modulation
+            %-----------------
+            % AM signal is created by adding DC offset to DSB (DC causes carrier in the Tx signal)
+            s_am  = (1 + m_sig) .* cos(2*pi*fc*t);
+            S_am  = fftshift(fft(s_am, Lfft));
+            
+            %-----------------
+            %! Demodulation
+            %-----------------
+            % Demodulation starts with rectifier
+            s_dem = s_am .* (s_am > 0);
+            S_dem = fftshift(fft(s_dem, Lfft));
+            
+            % Low pass filter
+            h     = fir1(40, BW_m*ts);
+            s_rec = filter(h, 1, s_dem);
+            S_rec = fftshift(fft(s_rec, Lfft));
+            
+            %-----------------
+            %! Plot
+            %-----------------
+            Trange = [-.025 .025 -2 2]; % Time domain range for plots
+            Frange = [-700 700 0 200];  % Frequency domain range for plots
+            
+            % 1.4 AM signal in  time and freq
+            figure(1)
+            subplot(2,1,1)
+            plot(t, s_am)
+            title('s_{am}(t)'); ylabel('Amp'); xlabel('Time (s)'); axis(Trange);
+            subplot(2,1,2)
+            plot(f, abs(S_am))
+            title('S_{am}(f)'); ylabel('Amp'); xlabel('Frequency (Hz)'); axis(Frange);
+            
+            % 1.5 Rectifed and Demodulated signal in time
+            figure(2)
+            subplot(2,1,1)
+            plot(t, s_dem)
+            title('s_{dem}(t)'); ylabel('Amp'); xlabel('Time (s)'); axis(Trange);
+            subplot(2,1,2)
+            plot(t, s_rec)
+            title('s_{rec}(t)'); ylabel('Amp'); xlabel('Time (s)'); axis([-.025 .025 -.5 1]);
+        \end{verbatim}
+
+    \section{FM}
+        \begin{verbatim}
+            %!--------------------------------
+            %! @file      FM.m
+            %!--------------------------------
+            
+            %! Adding path to functions
+            addpath(genpath('functions'));
+            
+            %! Script Variables
+            ts    = 1e-4;
+            fs    = 1/ts;
+            fc    = 300;
+            t     = -.04 : ts : .04;
+            Lfft  = length(t); Lfft = 2^ceil(log2(Lfft) + 1);
+            BW_m  = 100; % Bandwidth of the triangle function in Hz
+            f     = (-Lfft/2 : Lfft/2-1) * fs / Lfft;
+            
+            %-----------------
+            %! Message
+            %-----------------
+            m_sig = triangle_signal((t+.01)/.01) - triangle_signal((t-.01)/.01);
+            M_sig = fftshift(fft(m_sig, Lfft));
+            
+            %-----------------
+            %! Modulation
+            %-----------------
+            kf      = 160 * pi;
+            m_intg  = kf * ts * cumsum(m_sig);
+            s_fm    = cos(2*pi*fc*t + m_intg);
+            s_pm    = cos(2*pi*fc*t + pi*m_sig);
+            S_fm    = fftshift(fft(s_fm, Lfft));
+            S_pm    = fftshift(fft(s_pm, Lfft));
+            
+            %-----------------------
+            %! FM Demodulation
+            %-----------------------
+            s_fmdem = diff([s_fm(1) s_fm]) * fs / kf;   % Not sure why we diff sample 1 with its self
+            S_fmdem = fftshift(fft(s_fmdem, Lfft));
+            s_fmrec = s_fmdem .* (s_fmdem > 0);         % Rectifier
+            S_fmrec = fftshift(fft(s_fmrec, Lfft));
+            
+            % Low pass filter
+            h       = fir1(80, BW_m*ts);
+            s_dec   = filter(h, 1, s_fmrec);
+            
+            %-----------------
+            %! Plots
+            %-----------------
+            Frange = [-700 700 0 200];  % Frequency domain range for plots
+            
+            % 2.1 FM signal in time and frequency
+            figure(1)
+            subplot(2,1,1)
+            plot(t, s_fm)
+            title('s_{fm}(t)'); ylabel('Amp'); xlabel('Time (s)');
+            subplot(2,1,2)
+            plot(f, abs(S_fm))
+            title('S_{fm}(f)'); ylabel('Amp'); xlabel('Frequency (Hz)'); axis(Frange);
+            
+            % 2.2 PM signal in time and frequency
+            figure(2)
+            subplot(2,1,1)
+            plot(t, s_pm)
+            title('s_{pm}(t)'); ylabel('Amp'); xlabel('Time (s)');
+            subplot(2,1,2)
+            plot(f, abs(S_pm))
+            title('S_{pm}(f)'); ylabel('Amp'); xlabel('Frequency (Hz)'); axis(Frange);
+            
+            % Test
+            figure(3)
+            subplot(2,1,1)
+            plot(t, s_fmdem)
+            title('s_{fmdem}(t)'); ylabel('Amp'); xlabel('Time (s)');
+            subplot(2,1,2)
+            plot(f, abs(S_fmdem))
+            title('S_{fmdem}(f)'); ylabel('Amp'); xlabel('Frequency (Hz)'); axis(Frange);
+            figure(4)
+            subplot(2,1,1)
+            plot(t, s_fmrec)
+            title('s_{fmrec}(t)'); ylabel('Amp'); xlabel('Time (s)');
+            subplot(2,1,2)
+            plot(f, abs(S_fmrec))
+            title('S_{fmrec}(f)'); ylabel('Amp'); xlabel('Frequency (Hz)'); axis(Frange);
+            
+            % 2.3 Demodulated FM in time
+            figure(5)
+            subplot(2,1,1)
+            plot(t, m_sig)
+            title('s_{dec}_(t)'); ylabel('Amp'); xlabel('Time (s)');
+            subplot(2,1,2)
+            plot(t, s_dec)
+            title('s_{dec}(t)'); ylabel('Amp'); xlabel('Time (s)');
+        \end{verbatim}
+
+\end{document}
