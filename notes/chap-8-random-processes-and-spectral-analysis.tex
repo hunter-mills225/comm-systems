@@ -1,0 +1,217 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\renewcommand{\baselinestretch}{1}
+\setlength{\textheight}{9in}
+\setlength{\textwidth}{6.5in}
+\setlength{\headheight}{0in}
+\setlength{\headsep}{0in}
+\setlength{\topmargin}{0in}
+\setlength{\oddsidemargin}{0in}
+\setlength{\evensidemargin}{0in}
+\setlength{\parindent}{.3in}
+\graphicspath{{images/}}
+
+
+\title{Communication Systems \\
+    \large Chapter 8 Random Processes and Spectral Analysis }
+\author{Hunter Mills}
+\date{\today}
+
+\begin{document}
+    \maketitle
+
+    \medskip
+
+    A \textbf{Random Process} is a natural extension from random variables, such that a random variable 
+    $\chi$ that is a function of time $\chi(t)$ is a Random Process or \textbf{Stochastic Process}. 
+
+    \section{From Random Variable to Random Process}
+    To specify an RV $\chi$, one must run multiple trials of the experiment and estimate $p_{\chi}(x)$ 
+    from the outcomes. Similarly, for the random process $\chi(t)$ one must repeat trails at each $t$.
+    The collection of all possible waveforms if known as the \textbf{ensemble} of the RP $\chi(t)$. 
+    A waveform in this collection is a \textbf{sample function} ($x(t, \zeta_i)$) of the RP.
+
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=7cm, height=5cm]{rp}
+        \caption{Ensemble of a Random Process}
+    \end{figure}
+
+    We can view a random process as the outcome of an experiment where instead of being a sample point
+    (RV) the outcome is a sample function (RP). 
+
+    One important point is that the sample functions in the ensemble are not random. They have occurred
+    and are therefor deterministic. Randomness in this situation is associated not with the waveform
+    but with the uncertainty regarding which waveform would occur in a given trial. 
+
+    \section{Autocorrelation Function of a Random Process}
+    An important characteristic of a RP is its \textbf{Autocorrelation Function} which is related to the spectral information 
+    of the RP. The spectral content of a process depends on the rapidity of the amplitude change over time. This can be done 
+    by correlating the amplitudes at $t_1$ and $t_1 + \tau$. We can use the correlation to measure the similarity of amplitudes
+    at $t_1$ and $t_2 = t_1 + \tau$. If the RV's $\chi(t_1)$ and $\chi(t_2)$ are denoted as $\chi_1$ and $\chi_2$ then the
+    autocorrelation of a real RP $R_\chi(t_1, t_2)$ instead
+    \begin{equation}
+        R_\chi(t_1, t_2) = \overline{\chi(t_1)\chi(t_2)} = \overline{\chi_1\chi_2}
+    \end{equation}
+    \begin{equation}
+        R_\chi(t_1, t_2) = \int\int x_1x_2p_{\chi}(x_1, x_2; t_1, t_2)dx_1 dx_2
+    \end{equation}
+
+    \section{Classification of Random Processes}
+    \subsection{Stationary and Non-stationary Random Processes}
+    A RP whose statistical characteristics do not change with time is classified as a \textbf{stationary random process}.
+    For a stationary RP, a shift of the time origin will be impossible to detect; the process will appear the same. If the
+    time origin is shifted for a RP from $t_1$ to $t_2 = t_1 + t_0$ then the PDF's at $t_1$ and $t_2$ must be the same.
+    This is only possible if $p_\chi(x; t)$ is independent of $t$. This the first order denisity of a RP can be expresses as
+    \begin{equation}
+        p_{\chi}(x; t) = p_{\chi}(x)
+    \end{equation}
+    Similarly for a stationary RP, the autocorrelation function $R_\chi(t_1, t_2)$ must depend on $t_1$ and $t_2$ only through 
+    the difference $t_2 - t_1$. 
+    \begin{equation}
+        R_\chi(t_1, t_2) = R_\chi(t_2-t_1)
+    \end{equation}
+    \begin{equation}
+        R_\chi(\tau) = \overline{\chi(t)\chi(t + \tau)}
+    \end{equation}
+
+    \subsection{Wide-Sense (Weakly) Stationary Processes}
+    If the mean and autocorrelation of a RP are independent of time (but not strictly stationary) they are called \textbf{
+    Wide-Sense Stationary}. This conditions are 
+    \begin{equation}
+        \overline{\chi(t)} = A \quad \textrm{(constant)}
+    \end{equation}
+    and 
+    \begin{equation}
+        R_\chi(t_1, t_2) = R_\chi(\tau) \quad\quad \tau = t_2 - t_1
+    \end{equation}
+
+    \subsection{Ergodic Wide-Sense Stationary Process}
+    The time average of a sample function is defined as
+    \begin{equation}
+        \widetilde{x(t)} = \lim_{T \rightarrow \infty}\frac{1}{T}\int_{-T/2}^{T/2}x(t, \zeta_i)dt
+    \end{equation}
+    and the time autocorrelation of that sample function is 
+    \begin{equation}
+        \mathcal{R_\chi(\tau)} = \widetilde{(x(t)x(t+\tau))} = 
+            \lim_{T \rightarrow \infty}\frac{1}{T}\int_{-T/2}^{T/2}x(t, \zeta_i)x(t+\tau, \zeta_i)dt
+    \end{equation}
+    For \textbf{ergodic wide sense stationary processes}, these must be true:
+    \begin{equation}
+        \overline{\chi(t)} = \widetilde{x(t)}
+    \end{equation}
+    and 
+    \begin{equation}
+        R_\chi(\tau) = \mathcal{R}_\chi(\tau)
+    \end{equation}
+
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=5cm, height=3cm]{ergodic}
+        \caption{Relation Among different Random Processes}
+    \end{figure}
+
+    \section{Power Spectral Density}
+    For WSS RP's there is a meaningful PSD but if it is non-stationary it may not have a meaningful PSD. The PSD $S_\chi(f)$ 
+    of a random process $\chi(t)$ is the ensemble average of the PSD's of all sample functions.
+    \begin{equation}
+        S_\chi(f) = \lim_{T\rightarrow\infty} = \overline{ \left[ \frac{|\chi_T(f)|^2}{T} \right]} \quad \textrm{W/Hz}
+    \end{equation}
+    where $\chi_T(f)$ is the Fourier transform of the time truncated RP:
+    \begin{equation}
+        \chi_T(t) = \chi(t) \Pi(t/T)
+    \end{equation}
+    The PSD is the Fourier transform of the autocorrelation function $R_\chi(\tau)$, \textbf{Wiener Khintchine therorem}
+    \begin{equation}
+        R_\chi(\tau) \leftrightarrow S_\chi(f)
+    \end{equation}
+    Some useful formulas from the previous derivation:
+    \begin{equation}
+        R_\chi(-\tau) = R_\chi(\tau)
+    \end{equation}
+    \begin{equation}
+        R_\chi(0) = \overline{\chi(t)\chi^*(t)} = \overline{|\chi(t)|^2} = \overline{|\chi|^2}
+    \end{equation}
+    The mean square value of the random process is $R_\chi(0)$.
+
+    \subsection{The Power of a Random Process}
+    The power $P_\chi$ of a WSS RP $\chi(t)$ is 
+    \begin{equation}
+        P_\chi = \overline{|\chi|^2} = 2\int_0^{\infty}S_\chi(f)df
+    \end{equation}
+
+    \section{Multiple Random Processes}
+    For two random processes $\chi(t)$ and $\gamma(t)$ the \textbf{cross correlation} is 
+    \begin{equation}
+        R_{\chi\gamma}(t_1, t_2) = \overline{x(t_1)y(t_2)}
+    \end{equation}
+    The two processes are said to be \textbf{jointly stationary} (WSS) if each process is WSS and
+    \begin{equation}
+        R_{\chi\gamma}(t_1, t_2) = R_{\chi\gamma}(t_2-t_1) = R_{\chi\gamma}(\tau)
+    \end{equation}
+
+    \subsection{Uncorrelated, Orthogonal (Incoherent), and Independent Processes}
+    Two processes are said to be \textbf{uncorrelated} if their cross correlation is equal to the product of their means,
+    \begin{equation}
+        R_{\chi\gamma}(\tau) = \overline{\chi(t)\gamma(t+\tau)} = \bar{\chi}\bar{\gamma}
+    \end{equation}
+    And are incoherent/orthogonal If
+    \begin{equation}
+        R_{\chi\gamma}(\tau) = 0-
+    \end{equation}
+    Finally the two processes are independent if $\chi(t_1)$ and $\gamma(t_2)$ are independent for all $t_1$ and $t_2$.
+
+    \subsection{Cross Power Spectral Density}
+    The cross power spectral density $S_{\chi\gamma}(f)$ is defined as
+    \begin{equation}
+        S_{\chi\gamma}(f) = \lim_{T \rightarrow \infty} \frac{\overline{X_T^*(f)T_T^*(f)}}{T}
+    \end{equation}
+    where $X_T(f)$ and $Y_T(f)$ are fourier transforms of the truncated process.
+    \begin{equation}
+        R_{\chi\gamma}(\tau) \leftrightarrow S_{\chi\gamma}(f)
+    \end{equation}
+    For real random processes
+    \begin{equation}
+        R_{\chi\gamma}(\tau) = R_{\gamma\chi}(-\tau)
+    \end{equation}
+    \begin{equation}
+        S_{\chi\gamma}(f) = S_{\gamma\chi}(-f)
+    \end{equation}
+
+    \section{Transmission of Random Processes Through Linear Systems}
+    If a RP $\chi(t)$ is an input to a stable LTI system with transfer function $H(f)$ we can determine the autocorrelation
+    function and output PSD of $\gamma(t)$.  
+    \begin{equation}
+        R_\gamma(\tau) = h(\tau) \ast h(-\tau) \ast R_\chi(\tau)
+    \end{equation}
+    \begin{equation}
+        S_\gamma(f) = |H(f)|^2S_\chi(f)
+    \end{equation}
+
+    \subsection{Sum of Random Processes}
+    If two stationary (at least WSS) are added 
+    \begin{equation}
+        \zeta(t) = \chi(t) + \gamma(t)
+    \end{equation}
+    then 
+    \begin{equation}
+        R_\zeta(\tau) = R_\chi(\tau) + R_\gamma(\tau) + R_{\chi\gamma}(\tau) + R_{\gamma\chi}(\tau)
+    \end{equation}
+    If the two processes are uncorrelated then
+    \begin{equation}
+        R_\zeta(\tau) = R_\chi(\tau) + R_\gamma(\tau) + 2\bar{\chi}\bar{\gamma}
+    \end{equation}
+    Most processes in communication systems are zero mean. If the two processes are uncorrelated with one of the means of $0$
+    then
+    \begin{equation}
+        R_\zeta(\tau) = R_\chi(\tau) + R_\gamma(\tau)
+    \end{equation}
+    and 
+    \begin{equation}
+        \bar{\zeta^2} = \bar{\chi^2} + \bar{\gamma^2}
+    \end{equation}
+    Hence the mean square of a sum of incoherent processes is equal to the sum of the mean squares of these processes.
+
+\end{document}
